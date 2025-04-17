@@ -1,4 +1,4 @@
-"""Переменная со словаоем для проверки функций"""
+"""Переменная со словарем для проверки функций"""
 
 users_data = [
     {'id': 41428829, 'state': 'EXECUTED', 'date': '2019-07-03T18:35:29.512364'},
@@ -17,11 +17,12 @@ def filter_by_state(date_list: list, state: str = "EXECUTED") -> list:
     return filtered_list
 
 
-def sort_by_date(date_list: list[dict[str, any]], reverse: bool = True) -> list[dict[str, any]]:
+def sort_by_date(date_list: list, reverse: bool = True) -> list:
 
     """Функция сортировки списка словарей по дате"""
 
     return sorted(date_list, key=lambda x: str(x.get("date")), reverse=reverse)
+
 
 """Проверка работы функций"""
 a = filter_by_state(users_data)
