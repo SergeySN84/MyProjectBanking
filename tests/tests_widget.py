@@ -1,6 +1,7 @@
 import pytest
 from src.widget import get_data, mask_account_card
 
+
 # Фикстура для тестовых данных маскировки карт и счетов
 @pytest.fixture
 def masking_test_data():
@@ -12,6 +13,7 @@ def masking_test_data():
         ("Invalid Input", None),
         ("", None)
     ]
+
 
 # Тесты для функции mask_account_card
 @pytest.mark.parametrize("input_data, expected_output", [
@@ -28,6 +30,7 @@ def test_mask_account_card(input_data, expected_output):
     """
     assert mask_account_card(input_data) == expected_output
 
+
 # Фикстура для тестовых данных функции get_data
 @pytest.fixture
 def date_test_data():
@@ -37,6 +40,7 @@ def date_test_data():
         ("2023-12-31T23:59:59.999999", "31.12.2023")
     ]
 
+
 # Тесты для функции get_data
 @pytest.mark.parametrize("input_data, expected_output", [
     ("2023-10-05T14:48:00.123456", "05.10.2023"),
@@ -45,10 +49,12 @@ def date_test_data():
 ])
 def test_get_data_valid_format(input_data, expected_output):
     """
-    Параметризованный тест для функции get_data с корректным форматом входных данных.
+    Параметризованный тест для функции get_data с корректным
+    форматом входных данных.
     """
     result = get_data(input_data)
-    assert result == expected_output, f"Ожидалось {expected_output}, но получено {result}"
+    assert result == expected_output, (f"Ожидалось {expected_output},"
+                                       f" но получено {result}")
 
 
 def test_get_data_invalid_format():
