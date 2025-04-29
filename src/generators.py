@@ -65,9 +65,8 @@ def filter_by_currency(transactions: List[Dict[str, Any]], currency_code: str) -
                   t["operationAmount"]["currency"]["code"] ==
                   currency_code, transactions)
 
+
 # Генератор описаний
-
-
 def transaction_descriptions(transactions: List[Dict[str, Any]]) -> Any:
 
     """
@@ -76,9 +75,8 @@ def transaction_descriptions(transactions: List[Dict[str, Any]]) -> Any:
     for trans in transactions:
         yield trans["description"]
 
+
 # Проверка вывода фильтрации по типу валюты
-
-
 if __name__ == "__main__":
 
     transaction_user = filter_by_currency(transaction, "USD")
@@ -86,6 +84,7 @@ if __name__ == "__main__":
     print("Сортировка по типу валюты:")
     for tran in transaction_user:
         print(tran)
+
 
 # Проверка вывода описания транзакций
 if __name__ == "__main__":
