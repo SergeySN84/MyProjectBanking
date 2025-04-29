@@ -1,4 +1,4 @@
-from typing import List, Dict, Any, Generator
+from typing import List, Dict, Any
 
 # Список транзакций (скопирован из вашего сообщения)
 transaction = [
@@ -53,16 +53,23 @@ transaction = [
 ]
 
 # Функция фильтрации
+
+
 def filter_by_currency(transactions: List[Dict[str, Any]], currency_code: str) -> filter:
 
     """
     Функция для фильтрации транзакций по типу валюты
     """
 
-    return filter(lambda t: t["operationAmount"]["currency"]["code"] == currency_code, transactions)
+    return filter(lambda t:
+                  t["operationAmount"]["currency"]["code"] ==
+                  currency_code, transactions)
 
 # Генератор описаний
-def transaction_descriptions(transactions: List[Dict[str, Any]]) -> Generator[str, None, None]:
+
+
+def transaction_descriptions(transactions: List[Dict[str, Any]]) -> Any:
+
     """
     Функция для вывода всех описаний транзакций
     """
@@ -70,12 +77,14 @@ def transaction_descriptions(transactions: List[Dict[str, Any]]) -> Generator[st
         yield trans["description"]
 
 # Проверка вывода фильтрации по типу валюты
+
+
 if __name__ == "__main__":
 
-   transaction_user = filter_by_currency(transaction, "USD")
+    transaction_user = filter_by_currency(transaction, "USD")
 
-   print("Сортировка по типу валюты:")
-   for tran in transaction_user:
+    print("Сортировка по типу валюты:")
+    for tran in transaction_user:
         print(tran)
 
 # Проверка вывода описания транзакций
@@ -87,16 +96,24 @@ if __name__ == "__main__":
     for desc in descriptions:
         print(desc)
 
-def card_number_generator(start: int, end: int):
+
+def card_number_generator(start: int, stop: int) -> Any:
     """
-    Генератор, который выдает номера банковских карт в формате XXXX XXXX XXXX XXXX.
-    """
-    for number in range(start, end + 1):
+       Генератор, который выдает номера банковских карт.
+       Диапазон должен быть в пределах от 1 до 9999999999999999.
+       """
+    if start < 0 or stop > 9999999999999999:
+        raise ValueError("Числа должны быть в диапазоне от 0 до"
+                         " 9999999999999999.")
+
+    for number in range(start, stop + 1):
         # Преобразуем число в строку и дополняем нулями слева до 16 знаков
         num_str = f"{number:016d}"
         # Форматируем в виде XXXX XXXX XXXX XXXX
-        formatted_card_number = f"{num_str[:4]} {num_str[4:8]} {num_str[8:12]} {num_str[12:16]}"
+        formatted_card_number = (f"{num_str[:4]} {num_str[4:8]} "
+                                 f"{num_str[8:12]} {num_str[12:16]}")
         yield formatted_card_number
+
 
 # Проверка вывода генератора номеров карт
 for card_number in card_number_generator(1, 5):
