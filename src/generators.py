@@ -76,34 +76,13 @@ def transaction_descriptions(transactions: List[Dict[str, Any]]) -> Any:
         yield trans["description"]
 
 
-# Проверка вывода фильтрации по типу валюты
-if __name__ == "__main__":
-
-    transaction_user = filter_by_currency(transaction, "USD")
-
-    print("Сортировка по типу валюты:")
-    for tran in transaction_user:
-        print(tran)
-
-
-# Проверка вывода описания транзакций
-if __name__ == "__main__":
-
-    descriptions = transaction_descriptions(transaction)
-
-    print("Описания транзакций:")
-    for desc in descriptions:
-        print(desc)
-
-
 def card_number_generator(start: int, stop: int) -> Any:
     """
        Генератор, который выдает номера банковских карт.
        Диапазон должен быть в пределах от 1 до 9999999999999999.
        """
     if start < 0 or stop > 9999999999999999:
-        raise ValueError("Числа должны быть в диапазоне от 0 до"
-                         " 9999999999999999.")
+        raise ValueError("Числа должны быть в диапазоне от 0 до 9999999999999999.")
 
     for number in range(start, stop + 1):
         # Преобразуем число в строку и дополняем нулями слева до 16 знаков

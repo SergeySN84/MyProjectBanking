@@ -70,12 +70,16 @@ def sample_transactions():
     ("RUB", 1),
     ("JPY", 0),
 ])
-def test_filter_by_currency(sample_transactions,
-                            currency_code, expected_count):
+def test_filter_by_currency(sample_transactions, currency_code, expected_count):
     result = list(filter_by_currency(sample_transactions, currency_code))
     assert len(result) == expected_count
     for item in result:
         assert item["operationAmount"]["currency"]["code"] == currency_code
+
+# Тест на пустой список
+def test_filter_by_currency_empty_list():
+    result = list(filter_by_currency([], "USD"))
+    assert len(result) == 0
 
 
 # Тестирование: transaction_descriptions
@@ -89,6 +93,26 @@ def test_transaction_descriptions(sample_transactions):
         "Перевод организации"
     ]
     assert descriptions == expected
+
+# Тест на пустой список
+def test_transaction_descriptions_empty_list():
+    assert list(transaction_descriptions([])) == []
+
+# Тест на отсутствие ключа "description"
+def test_transaction_descriptions_missing_key():
+    bad_data = [{}]
+    with pytest.raises(KeyError):
+        list(transaction_descriptions(bad_data))
+
+# Тест на частично отсутствующие описания
+def test_transaction_descriptions_partial_missing():
+    mixed_data = [
+        {"description": "Перевод 1"},
+        {},  # нет description
+        {"description": "Перевод 2"}
+    ]
+    with pytest.raises(KeyError):  # Если вы не обрабатываете такие случаи
+        list(transaction_descriptions(mixed_data))
 
 
 # Тестирование: card_number_generator
@@ -109,3 +133,26 @@ def test_transaction_descriptions(sample_transactions):
 def test_card_number_generator(start, stop, expected_result):
     result = list(card_number_generator(start, stop))
     assert result == expected_result
+
+# Тест на ValueError при некорректном диапазоне
+def test_card_number_generator_invalid_start():
+    with pytest.raises(ValueError):
+        list(card_number_generator(-1, 1))
+
+def test_card_number_generator_invalid_end():
+    with pytest.raises(ValueError):
+        list(card_number_generator(1, 10000000000000000))
+
+# Тест на start > end
+def test_card_number_generator_start_greater_end():
+    result = list(card_number_generator(10, 1))
+    assert result == []  # Пустой список, если start > end
+
+# Тест на граничные значения
+def test_card_number_generator_edge_values():
+    result = list(card_number_generator(0, 0))
+    assert result == ["0000 0000 0000 0000"]
+
+def test_card_number_generator_max_value():
+    result = list(card_number_generator(9999999999999999, 9999999999999999))
+    assert result == ["9999 9999 9999 9999"]
