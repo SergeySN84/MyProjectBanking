@@ -2,55 +2,70 @@ from functools import wraps
 
 
 def log(filename=None):
+    """
+    Декоратор для логирования вызовов функций: успешного завершения или ошибки.
+
+    Аргументы:
+        filename (str, optional): Имя файла, в который будут записываться логи.
+                                  Если не указано, логи выводятся в консоль.
+    """
+
     def decorator(func):
+        """
+        Внутренний декоратор, оборачивающий целевую функцию.
+
+        Аргументы:
+            func (function): Декорируемая функция.
+        """
+
         @wraps(func)
         def wrapper(*args, **kwargs):
-            logger = open(filename, 'a') if filename else None
-            try:
-                # Логирование начала выполнения
-                start_msg = (f"Выполнение функции {func.__name__} "
-                             f"с аргументами args={args}, kwargs={kwargs}\n")
-                if filename:
-                    with open(filename, 'a') as f:
-                        f.write(start_msg)
-                else:
-                    print(start_msg, end='')
+            """
+            Обёртка вокруг функции, добавляющая логирование.
 
-                # Выполнение функции
+            Аргументы:
+                *args: Позиционные аргументы целевой функции.
+                **kwargs: Именованные аргументы целевой функции.
+
+            Возвращает:
+                Результат выполнения целевой функции.
+
+            Исключения:
+                Перебрасывает любое исключение, возникшее
+                при выполнении функции,
+                после записи сообщения об ошибке в лог.
+            """
+            try:
                 result = func(*args, **kwargs)
 
-                # Логирование успешного завершения
-                success_msg = (f"Функция {func.__name__} "
-                               f"успешно завершена. Результат: {result}\n")
+                msg = f"{func.__name__} ok\n"
                 if filename:
                     with open(filename, 'a') as f:
-                        f.write(success_msg)
+                        f.write(msg)
                 else:
-                    print(success_msg)
+                    print(msg, end='')
+
                 return result
+
             except Exception as e:
-                # Логирование ошибки
-                error_msg = (f"Ошибка в функции {func.__name__}:"
-                             f" {type(e).__name__}, "
-                             f"Аргументы: args={args}, kwargs={kwargs}\n")
+                msg = (f"{func.__name__} error: {type(e).__name__}."
+                       f" Inputs: {args}, {kwargs}\n")
                 if filename:
                     with open(filename, 'a') as f:
-                        f.write(error_msg)
+                        f.write(msg)
                 else:
-                    print(error_msg)
+                    print(msg, end='')
+
                 raise
-            finally:
-                if logger:
-                    logger.close()
 
         return wrapper
 
     return decorator
 
 
-@log()
-def add(a, b):
-    return a + b
+@log(filename="mylog.txt")
+def my_function(x, y):
+    return x + y
 
 
-add(3, 5)
+my_function(1, 2)

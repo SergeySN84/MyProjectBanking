@@ -1,91 +1,77 @@
+import os
 import pytest
-
-# Импортируем декоратор и тестовую функцию
 from src.decorators import log
 
+LOG_FILE = "mylog.txt"
 
-# Тест для проверки логирования в консоль
-def test_log_to_console(capsys):
+
+@pytest.fixture(autouse=True)
+def cleanup_log_file():
+    """Очищает лог-файл до и после каждого теста."""
+    if os.path.exists(LOG_FILE):
+        os.remove(LOG_FILE)
+    yield
+    if os.path.exists(LOG_FILE):
+        os.remove(LOG_FILE)
+
+
+def test_successful_execution_logs_to_console(capsys):
+    """Проверяет, что успешный вызов записывается в консоль."""
+
     @log()
-    def test_func(a, b):
-        return a + b
+    def say_hello(name):
+        return f"Hello, {name}!"
 
-    test_func(2, 3)
+    say_hello("Alice")
 
     captured = capsys.readouterr()
-    assert ("Выполнение функции test_func с аргументами args=(2, 3),"
-            " kwargs={}") in captured.out
-    assert ("Функция test_func успешно завершена. "
-            "Результат: 5") in captured.out
+    assert captured.out == "say_hello ok\n"
+    assert captured.err == ""
 
 
-# Тест для проверки логирования в файл
-def test_log_to_file(tmp_path):
-    log_file = tmp_path / "test_log.txt"
+def test_error_execution_logs_to_console(capsys):
+    """Проверяет, что исключение логируется в консоль."""
 
-    @log(filename=str(log_file))
+    @log()
+    def divide(a, b):
+        return a / b
+
+    with pytest.raises(ZeroDivisionError):
+        divide(10, 0)
+
+    captured = capsys.readouterr()
+    assert ("divide error: ZeroDivisionError."
+            " Inputs: (10, 0), {}") in captured.out
+    assert captured.err == ""
+
+
+def test_successful_execution_logs_to_file():
+    """Проверяет, что успешный вызов записывается в файл."""
+
+    @log(filename=LOG_FILE)
     def multiply(a, b):
         return a * b
 
-    multiply(4, 5)
+    multiply(3, 4)
 
-    content = log_file.read_text()
-    assert ("Выполнение функции multiply с аргументами args=(4, 5),"
-            " kwargs={}") in content
-    assert "Функция multiply успешно завершена. Результат: 20" in content
-
-
-# Тест для проверки обработки исключений
-def test_error_handling(capsys):
-    @log()
-    def faulty_func():
-        raise ValueError("Test error")
-
-    with pytest.raises(ValueError):
-        faulty_func()
-
-    captured = capsys.readouterr()
-    assert ("Выполнение функции faulty_func с аргументами args=(),"
-            " kwargs={}") in captured.out
-    assert ("Ошибка в функции faulty_func: ValueError,"
-            " Аргументы: args=(), kwargs={}") in captured.out
+    assert os.path.exists(LOG_FILE)
+    with open(LOG_FILE, 'r') as f:
+        content = f.read()
+    assert content == "multiply ok\n"
 
 
-# Тест для проверки сохранения метаданных функции
-def test_metadata_preservation():
-    @log()
-    def original_func():
-        """Original docstring"""
-        pass
+def test_error_execution_logs_to_file():
+    """Проверяет, что исключение записывается в файл."""
 
-    assert original_func.__name__ == "original_func"
-    assert original_func.__doc__ == "Original docstring"
+    @log(filename=LOG_FILE)
+    def power(a, b):
+        return a ** b
 
+    with pytest.raises(TypeError):
+        power("two", 2)
 
-# Тест для проверки логирования именованных аргументов
-def test_keyword_arguments_logging(capsys):
-    @log()
-    def greet(name, greeting="Hello"):
-        return f"{greeting}, {name}!"
-
-    greet(name="Alice", greeting="Hi")
-
-    captured = capsys.readouterr()
-    assert "args=()" in captured.out
-    assert "kwargs={'name': 'Alice', 'greeting': 'Hi'}" in captured.out
-    assert "Результат: Hi, Alice!" in captured.out
-
-
-# Тест для проверки работы с разными типами аргументов
-def test_complex_arguments_logging(capsys):
-    @log()
-    def process_data(data: list, flag: bool = False):
-        return len(data) if flag else sum(data)
-
-    test_data = [1, 2, 3]
-    process_data(test_data, flag=True)
-
-    captured = capsys.readouterr()
-    assert "args=([1, 2, 3],)" in captured.out
-    assert "kwargs={'flag': True}" in captured.out
-    assert "Результат: 3" in captured.out
+    assert os.path.exists(LOG_FILE)
+    with open(LOG_FILE, 'r') as f:
+        content = f.read()
+    assert ("power error: TypeError."
+            " Inputs: ('two', 2), {}") in content
