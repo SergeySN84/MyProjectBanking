@@ -38,7 +38,7 @@ def log(filename=None):
                         f.write(error_msg)
                 else:
                     print(error_msg)
-                raise  # Пробрасываем исключение дальше
+                raise
             finally:
                 if logger:
                     logger.close()
