@@ -1,6 +1,7 @@
 import os
 import json
 
+
 def read_transactions(file_path: str) -> list:
     """
     Читает данные о финансовых транзакциях из JSON-файла.
@@ -34,8 +35,10 @@ def read_transactions(file_path: str) -> list:
 
     return data
 
+
 # Определяем путь к файлу
-file_path_outer = os.path.abspath(os.path.join('..', 'data', 'operations.json'))
+file_path_outer = os.path.abspath(os.path.join('..',
+                                               'data', 'operations.json'))
 
 # Проверяем существование файла
 if not os.path.exists(file_path_outer):

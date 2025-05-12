@@ -3,22 +3,27 @@ from dotenv import load_dotenv
 import os
 from src.utils import read_transactions
 
+
 class CurrencyConversionError(Exception):
     """Исключение для ошибок при конвертации валют."""
     pass
 
 
-def get_currency_rate(base_currency: str, target_currency: str = "RUB") -> float:
+def get_currency_rate(base_currency: str, target_currency: str = "RUB")\
+        -> float:
     """
-    Получает текущий курс валюты по отношению к целевой валюте (по умолчанию RUB).
+    Получает текущий курс валюты по отношению к целевой валюте
+    (по умолчанию RUB).
     """
 
-    env_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.env'))
+    env_path = os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                            '..', '.env'))
     load_dotenv(env_path)
     api_key = os.getenv("API_KEY")
 
     if not api_key:
-        raise ValueError("API ключ не найден. Убедитесь, что файл .env содержит переменную API_KEY.")
+        raise ValueError("API ключ не найден. Убедитесь, что файл .env "
+                         "содержит переменную API_KEY.")
 
     # Чистим значения от пробелов
     base_currency = base_currency.strip().upper()
@@ -64,8 +69,9 @@ def convert_to_rub(amount: float, currency: str) -> float:
         rate = get_currency_rate(currency)
         return amount * rate
     except CurrencyConversionError as e:
-        print(f"[Предупреждение] Не удалось конвертировать {amount} {currency}: {e}")
-        return float('nan')  # NaN — как индикатор ошибки, можно заменить на 0 или None
+        print(f"[Предупреждение] Не удалось конвертировать {amount}"
+              f" {currency}: {e}")
+        return float('nan')
 
 
 def get_transaction_amount_in_rub(transaction: dict) -> float:
@@ -78,7 +84,8 @@ def get_transaction_amount_in_rub(transaction: dict) -> float:
 
     try:
         amount = float(transaction["operationAmount"]["amount"])
-        currency = transaction["operationAmount"]["currency"]["code"].strip().upper()
+        currency = (transaction["operationAmount"]["currency"]["code"]
+                    .strip().upper())
     except KeyError as e:
         raise KeyError(f"Отсутствует обязательное поле в транзакции: {e}")
     except ValueError:
@@ -90,7 +97,8 @@ def get_transaction_amount_in_rub(transaction: dict) -> float:
 
 
 # Определяем путь к файлу
-file_path_outer = os.path.abspath(os.path.join('..', 'data', 'operations.json'))
+file_path_outer = os.path.abspath(os.path.join('..',
+                                               'data', 'operations.json'))
 
 # Чтение данных
 transactions_list = read_transactions(file_path_outer)

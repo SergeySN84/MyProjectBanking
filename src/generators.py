@@ -55,7 +55,8 @@ transaction = [
 # Функция фильтрации
 
 
-def filter_by_currency(transactions: List[Dict[str, Any]], currency_code: str) -> filter:
+def filter_by_currency(transactions: List[Dict[str, Any]], currency_code: str)\
+        -> filter:
 
     """
     Функция для фильтрации транзакций по типу валюты

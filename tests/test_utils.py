@@ -1,4 +1,3 @@
-import pytest
 from src.utils import read_transactions
 from unittest.mock import patch, mock_open
 import json
@@ -10,7 +9,8 @@ def test_successful_read():
         {"id": 2, "amount": -50}
     ]
 
-    with patch("builtins.open", mock_open(read_data=json.dumps(mock_data))) as mocked_file:
+    with (patch("builtins.open",
+                mock_open(read_data=json.dumps(mock_data)))):
         with patch("os.path.exists", return_value=True):
             result = read_transactions("dummy_path.json")
             assert result == mock_data
