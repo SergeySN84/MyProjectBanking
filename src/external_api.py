@@ -29,7 +29,6 @@ def get_currency_rate(base_currency: str, target_currency: str = "RUB")\
     base_currency = base_currency.strip().upper()
     target_currency = target_currency.strip().upper()
 
-    # Корректный URL без лишних пробелов
     url = "https://api.apilayer.com/exchangerates_data/convert"
     headers = {"apikey": api_key}
     params = {
@@ -57,10 +56,20 @@ def get_currency_rate(base_currency: str, target_currency: str = "RUB")\
         raise CurrencyConversionError(f"Неожиданная ошибка: {e}")
 
 
-def convert_to_rub(amount: float, currency: str) -> float:
+def convert_to_rub(transaction: dict) -> float:
     """
-    Конвертирует сумму в рубли, если валюта отлична от RUB.
+    Конвертирует сумму транзакции в рубли, если валюта отлична от RUB.
+    Принимает на вход всю транзакцию.
     """
+
+    try:
+        amount = float(transaction["operationAmount"]["amount"])
+        currency = transaction[("operation"
+                                "Amount")]["currency"]["code"].strip().upper()
+    except KeyError as e:
+        raise KeyError(f"Отсутствует обязательное поле в транзакции: {e}")
+    except ValueError:
+        raise ValueError("Сумма транзакции не является числом")
 
     if currency == "RUB":
         return amount
@@ -69,31 +78,9 @@ def convert_to_rub(amount: float, currency: str) -> float:
         rate = get_currency_rate(currency)
         return amount * rate
     except CurrencyConversionError as e:
-        print(f"[Предупреждение] Не удалось конвертировать {amount}"
-              f" {currency}: {e}")
+        print(f"[Предупреждение] Не удалось конвертировать "
+              f"{amount} {currency}: {e}")
         return float('nan')
-
-
-def get_transaction_amount_in_rub(transaction: dict) -> float:
-    """
-    Возвращает сумму транзакции в рублях.
-    """
-
-    if not isinstance(transaction, dict):
-        raise TypeError("Транзакция должна быть словарем")
-
-    try:
-        amount = float(transaction["operationAmount"]["amount"])
-        currency = (transaction["operationAmount"]["currency"]["code"]
-                    .strip().upper())
-    except KeyError as e:
-        raise KeyError(f"Отсутствует обязательное поле в транзакции: {e}")
-    except ValueError:
-        raise ValueError("Сумма транзакции не является числом")
-
-    # Конвертируем сумму в рубли
-    rub_amount = convert_to_rub(amount, currency)
-    return rub_amount
 
 
 # Определяем путь к файлу
@@ -106,11 +93,7 @@ transactions_list = read_transactions(file_path_outer)
 # Обработка всех транзакций
 for single_transaction in transactions_list:
     try:
-        rub_total = get_transaction_amount_in_rub(single_transaction)
+        rub_total = convert_to_rub(single_transaction)
         print(f"Сумма транзакции в рублях: {rub_total:.2f}")
-    except CurrencyConversionError as conversion_error:
-        print(f"Ошибка конвертации валюты: {conversion_error}")
-    except ValueError as value_error:
-        print(f"Некорректные данные в транзакции: {value_error}")
-    except KeyError as key_error:
-        print(f"Ошибка формата транзакции: {key_error}")
+    except (CurrencyConversionError, ValueError, KeyError) as e:
+        print(f"Ошибка при обработке транзакции: {e}")

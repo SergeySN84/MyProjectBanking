@@ -1,5 +1,3 @@
-# test_currency_conversion.py
-
 import pytest
 import requests
 from unittest.mock import patch, Mock
