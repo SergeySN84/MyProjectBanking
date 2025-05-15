@@ -1,5 +1,20 @@
 import os
 import json
+import logging
+
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
+log_dir = os.path.join(current_dir, '..', 'logs')
+os.makedirs(log_dir, exist_ok=True)
+
+logger = logging.getLogger('utils')
+logger.setLevel(logging.DEBUG)
+log_file_path = os.path.join(log_dir, 'utils.log')
+file_handler = logging.FileHandler(log_file_path, mode='w', encoding='utf-8')
+file_formatter = logging.Formatter('%(asctime)s - %(name)s '
+                                   '- %(levelname)s - %(message)s')
+file_handler.setFormatter(file_formatter)
+logger.addHandler(file_handler)
 
 
 def read_transactions(file_path: str) -> list:
@@ -8,29 +23,33 @@ def read_transactions(file_path: str) -> list:
     """
     # Проверяем, существует ли файл
     if not os.path.exists(file_path):
-        print(f"Файл не найден: {file_path}")
+        logger.info("Проверяем, существует ли файл")
+        logger.error(f"Файл не найден: {file_path}")
         return []
 
     # Читаем содержимое файла
     try:
+        logger.info("Читаем содержимое файла")
         with open(file_path, 'r', encoding='utf-8') as file:
             data = json.load(file)
     except json.JSONDecodeError:
-        print(f"Файл содержит некорректный JSON: {file_path}")
+        logger.error(f"Файл содержит некорректный JSON: {file_path}")
         return []
     except Exception as e:
-        print(f"Ошибка при чтении файла: {e}")
+        logger.error(f"Ошибка при чтении файла: {e}")
         return []
 
     # Проверяем, является ли содержимое списком
     if not isinstance(data, list):
-        print(f"Содержимое файла не является списком: {file_path}")
+        logger.info("Проверяем, является ли содержимое списком")
+        logger.error(f"Содержимое файла не является списком: {file_path}")
         return []
 
     # Проверяем, что каждый элемент списка - словарь
+    logger.info("Проверяем, что каждый элемент списка - словарь")
     for item in data:
         if not isinstance(item, dict):
-            print(f"Элементы списка должны быть словарями: {file_path}")
+            logger.error(f"Элементы списка должны быть словарями: {file_path}")
             return []
 
     return data
@@ -42,9 +61,9 @@ file_path_outer = os.path.abspath(os.path.join('..',
 
 # Проверяем существование файла
 if not os.path.exists(file_path_outer):
-    print(f"Файл не существует по пути: {file_path_outer}")
+    logger.error(f"Файл не существует по пути: {file_path_outer}")
 else:
-    print(f"Файл найден: {file_path_outer}")
+    logger.info(f"Файл найден: {file_path_outer}")
 
 # Чтение данных
 transactions = read_transactions(file_path_outer)
