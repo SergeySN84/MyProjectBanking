@@ -2,12 +2,12 @@ import csv
 import pandas as pd
 import os
 
+
 def read_transactions_from_csv(file_path: str) -> list:
     """
-    Считывает финансовые операции из CSV файла и возвращает список словарей с транзакциями.
+    Считывает финансовые операции из CSV файла и возвращает
+    список словарей с транзакциями.
 
-    :param file_path: Путь к CSV файлу
-    :return: Список словарей с транзакциями
     """
     transactions = []
     try:
@@ -24,7 +24,8 @@ def read_transactions_from_csv(file_path: str) -> list:
 
 def read_transactions_from_excel(file_path: str) -> list:
     """
-    Считывает финансовые операции из Excel файла и возвращает список словарей с транзакциями.
+    Считывает финансовые операции из Excel файла и возвращает
+    список словарей с транзакциями.
 
     """
     transactions = []
@@ -41,8 +42,8 @@ def read_transactions_from_excel(file_path: str) -> list:
 
 
 # Определение пути к папке data
-project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # Корень проекта
-data_dir = os.path.join(project_root, "data")  # Папка data
+project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+data_dir = os.path.join(project_root, "data")
 
 # Пути к файлам
 csv_file_path = os.path.join(data_dir, "transactions.csv")
