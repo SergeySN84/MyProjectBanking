@@ -1,7 +1,9 @@
+import os
+
 import requests
 from dotenv import load_dotenv
-import os
-from src.utils import read_transactions
+
+from src.utils import read_transactions_from_json
 
 
 class CurrencyConversionError(Exception):
@@ -50,10 +52,10 @@ def get_currency_rate(base_currency: str, target_currency: str = "RUB")\
             return data["result"]
         else:
             raise CurrencyConversionError("Ответ API не содержит 'result'")
-    except requests.exceptions.RequestException as e:
-        raise CurrencyConversionError(f"Ошибка при запросе к API: {e}")
-    except Exception as e:
-        raise CurrencyConversionError(f"Неожиданная ошибка: {e}")
+    except requests.exceptions.RequestException as ex:
+        raise CurrencyConversionError(f"Ошибка при запросе к API: {ex}")
+    except Exception as ex:
+        raise CurrencyConversionError(f"Неожиданная ошибка: {ex}")
 
 
 def convert_to_rub(transaction: dict) -> float:
@@ -66,8 +68,8 @@ def convert_to_rub(transaction: dict) -> float:
         amount = float(transaction["operationAmount"]["amount"])
         currency = transaction[("operation"
                                 "Amount")]["currency"]["code"].strip().upper()
-    except KeyError as e:
-        raise KeyError(f"Отсутствует обязательное поле в транзакции: {e}")
+    except KeyError as ex:
+        raise KeyError(f"Отсутствует обязательное поле в транзакции: {ex}")
     except ValueError:
         raise ValueError("Сумма транзакции не является числом")
 
@@ -77,9 +79,9 @@ def convert_to_rub(transaction: dict) -> float:
     try:
         rate = get_currency_rate(currency)
         return amount * rate
-    except CurrencyConversionError as e:
+    except CurrencyConversionError as ex:
         print(f"[Предупреждение] Не удалось конвертировать "
-              f"{amount} {currency}: {e}")
+              f"{amount} {currency}: {ex}")
         return float('nan')
 
 
@@ -87,8 +89,8 @@ def convert_to_rub(transaction: dict) -> float:
 file_path_outer = os.path.abspath(os.path.join('..',
                                                'data', 'operations.json'))
 
-# Чтение данных
-transactions_list = read_transactions(file_path_outer)
+
+transactions_list = read_transactions_from_json(file_path_outer)
 
 # Обработка всех транзакций
 for single_transaction in transactions_list:

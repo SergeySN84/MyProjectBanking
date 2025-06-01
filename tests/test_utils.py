@@ -1,4 +1,4 @@
-from src.utils import read_transactions
+from src.utils import read_transactions_from_json
 from unittest.mock import patch, mock_open
 import json
 
@@ -12,32 +12,32 @@ def test_successful_read():
     with (patch("builtins.open",
                 mock_open(read_data=json.dumps(mock_data)))):
         with patch("os.path.exists", return_value=True):
-            result = read_transactions("dummy_path.json")
+            result = read_transactions_from_json("dummy_path.json")
             assert result == mock_data
 
 
 def test_file_not_found():
     with patch("os.path.exists", return_value=False):
-        result = read_transactions("non_existent_file.json")
+        result = read_transactions_from_json("non_existent_file.json")
         assert result == []
 
 
 def test_invalid_json():
     with patch("builtins.open", mock_open(read_data="invalid json")):
         with patch("os.path.exists", return_value=True):
-            result = read_transactions("dummy_path.json")
+            result = read_transactions_from_json("dummy_path.json")
             assert result == []
 
 
 def test_data_not_list():
     with patch("builtins.open", mock_open(read_data='{"key": "value"}')):
         with patch("os.path.exists", return_value=True):
-            result = read_transactions("dummy_path.json")
+            result = read_transactions_from_json("dummy_path.json")
             assert result == []
 
 
 def test_elements_not_dicts():
     with patch("builtins.open", mock_open(read_data="[1, 2, 3]")):
         with patch("os.path.exists", return_value=True):
-            result = read_transactions("dummy_path.json")
+            result = read_transactions_from_json("dummy_path.json")
             assert result == []

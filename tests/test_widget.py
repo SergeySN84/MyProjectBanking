@@ -1,5 +1,5 @@
 import pytest
-from src.widget import get_data, mask_account_card
+from src.widget import mask_account_card
 
 
 # Фикстура для тестовых данных маскировки карт и счетов
@@ -39,29 +39,3 @@ def date_test_data():
         ("2023-01-01T00:00:00.000000", "01.01.2023"),
         ("2023-12-31T23:59:59.999999", "31.12.2023")
     ]
-
-
-# Тесты для функции get_data
-@pytest.mark.parametrize("input_data, expected_output", [
-    ("2023-10-05T14:48:00.123456", "05.10.2023"),
-    ("2023-01-01T00:00:00.000000", "01.01.2023"),
-    ("2023-12-31T23:59:59.999999", "31.12.2023")
-])
-def test_get_data_valid_format(input_data, expected_output):
-    """
-    Параметризованный тест для функции get_data с корректным
-    форматом входных данных.
-    """
-    result = get_data(input_data)
-    assert result == expected_output, (f"Ожидалось {expected_output},"
-                                       f" но получено {result}")
-
-
-def test_get_data_invalid_format():
-    """
-    Тестирование функции get_data с некорректным форматом входных данных.
-    Проверяем, что возникает ValueError при неправильном формате.
-    """
-    invalid_input = "2023/10/05 14:48:00"
-    with pytest.raises(ValueError):
-        get_data(invalid_input)

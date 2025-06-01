@@ -11,26 +11,25 @@ def read_transactions_from_csv(file_path):
     transactions = []
     try:
         with open(file_path, mode='r', encoding='utf-8') as file:
-            # Создаем объект reader для чтения CSV-файла
-            reader = csv.reader(file, delimiter=';')
+            reader = csv.DictReader(file, delimiter=';')
 
             for row in reader:
-                if not row or len(row) < 9:
-                    continue
-
                 # Создаем словарь для транзакции
                 transaction = {
-                    'state': row[1],
-                    'date': row[2],
-                    'amount': (row[3]),
-                    'currency_name': row[4],
-                    'currency_code': row[5],
-                    'from': row[6] if row[6] else None,
-                    'to': row[7],
-                    'description': row[8]
+                    'state': row['state'],
+                    'date': row['date'],
+                    'amount': row['amount'],
+                    'currency_name': row['currency_name'],
+                    'currency_code': row['currency_code'],
+                    'from': row['from'] if row['from'] else None,
+                    'to': row['to'],
+                    'description': row['description']
                 }
                 transactions.append(transaction)
 
+    except FileNotFoundError:
+        print("Произошла ошибка при чтении CSV файла: Файл не найден")
+        return []
     except Exception as e:
         print(f"Произошла ошибка при чтении CSV файла: {e}")
 
@@ -63,6 +62,9 @@ def read_transactions_from_excel(file_path: str) -> list:
             transactions.append(transaction)
 
         return transactions
+    except FileNotFoundError:
+        print("Произошла ошибка при чтении XLSX файла: Файл не найден")
+        return []
     except Exception as e:
         print(f"Произошла ошибка при чтении XLSX файла: {e}")
         return []

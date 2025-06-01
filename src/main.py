@@ -1,4 +1,4 @@
-from finance_operations import (
+from src.finance_operations import (
     read_transactions_from_csv,
     read_transactions_from_excel,
 )

@@ -1,13 +1,14 @@
 import unittest
 import os
-from src.main import main# Предполагается, что main находится в src/main.py
+from src.main import main
 from unittest.mock import patch
+
 
 class TestMainWithoutMocks(unittest.TestCase):
     def setUp(self):
         """Настройка перед каждым тестом."""
-        self.original_dir = os.getcwd()  # Сохраняем текущую рабочую директорию
-        os.chdir(os.path.dirname(os.path.abspath(__file__)))  # Переходим в директорию с тестами
+        self.original_dir = os.getcwd()
+        os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
     def tearDown(self):
         """Очистка после каждого теста."""
@@ -15,17 +16,20 @@ class TestMainWithoutMocks(unittest.TestCase):
 
     def test_main_json(self):
         """Тест основного потока программы с JSON-файлом."""
-        with patch('builtins.input', side_effect=["1", "EXECUTED", "нет", "нет", "нет"]):
+        with patch('builtins.input', side_effect=["1", "EXECUTED",
+                                                  "нет", "нет", "нет"]):
             main()
 
     def test_main_csv(self):
         """Тест основного потока программы с CSV-файлом."""
-        with patch('builtins.input', side_effect=["2", "EXECUTED", "нет", "нет", "нет"]):
+        with patch('builtins.input', side_effect=["2", "EXECUTED",
+                                                  "нет", "нет", "нет"]):
             main()
 
     def test_main_excel(self):
         """Тест основного потока программы с XLSX-файлом."""
-        with patch('builtins.input', side_effect=["3", "EXECUTED", "нет", "нет", "нет"]):
+        with patch('builtins.input', side_effect=["3", "EXECUTED",
+                                                  "нет", "нет", "нет"]):
             main()
 
     def test_main_invalid_choice(self):
