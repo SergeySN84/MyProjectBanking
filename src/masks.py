@@ -39,7 +39,11 @@ def get_mask_account(mask_account: str) -> str:
         logger.error(f"Ошибка при маскировке счета: {e}", exc_info=True)
         return ""
 
+def mask_number(number, is_card=True):
+    """
+    Универсальная функция для маскировки номера карты или счета.
+    """
+    return get_mask_card_number(number) if is_card else get_mask_account(number)
 
-if __name__ == "__main__":
-    get_mask_card_number("1234567890123456")
-    get_mask_account("12345678901234567890")
+# print (get_mask_card_number("1234567890123456"))
+# print (get_mask_account("12345678901234567890"))

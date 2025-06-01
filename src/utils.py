@@ -17,7 +17,7 @@ file_handler.setFormatter(file_formatter)
 logger.addHandler(file_handler)
 
 
-def read_transactions(file_path: str) -> list:
+def read_transactions_from_json(file_path: str) -> list:
     """
     Читает данные о финансовых транзакциях из JSON-файла.
     """
@@ -66,7 +66,7 @@ else:
     logger.info(f"Файл найден: {file_path_outer}")
 
 # Чтение данных
-transactions = read_transactions(file_path_outer)
+# transactions = read_transactions_from_json(file_path_outer)
 
 # Вывод результата
-print("Транзакции:", transactions)
+# print("Транзакции:", transactions)
