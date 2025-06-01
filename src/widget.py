@@ -1,10 +1,6 @@
 from src.masks import get_mask_account, get_mask_card_number
 from datetime import datetime
 from typing import Optional
-from src.utils import read_transactions_from_json
-from src.finance_operations import read_transactions_from_excel, read_transactions_from_csv
-
-# transactions = read_transactions_from_csv("../data/transactions.csv")
 
 
 def mask_account_card(account_card: str) -> Optional[str]:
@@ -44,12 +40,6 @@ def mask_account_card(account_card: str) -> Optional[str]:
 
         return f"{name_part} {masked_number}"
 
-    # Если это другой тип карты
-    if any(card_type in account_card_list for card_type in ["American Express", "Discover"]):
-        card_type = account_card_list[0]
-        card_number = account_card_list[-1]
-        return f"{card_type} {get_mask_card_number(card_number)}"
-
     # Если формат неизвестен
     return None
 
@@ -65,7 +55,8 @@ def display_transactions(transactions):
             raw_date = transaction.get('date', '')
             description = transaction.get('description', '')
             amount = transaction.get('operationAmount', {}).get('amount', '')
-            currency = transaction.get('operationAmount', {}).get('currency', {}).get('code', '')
+            currency = (transaction.get('operationAmount', {}).
+                        get('currency', {}).get('code', ''))
             from_account = transaction.get('from', '')
             to_account = transaction.get('to', '')
 

@@ -1,6 +1,5 @@
 import re
 from collections import Counter
-import json
 
 
 def filter_by_description(transactions, search_string):
@@ -38,7 +37,8 @@ def filter_by_status(transactions, status):
     """
     Фильтрует транзакции по статусу.
     """
-    return [t for t in transactions if str(t.get('state', '')).upper() == status]
+    return [t for t in transactions if str(t.get('state', '')).upper()
+            == status]
 
 
 def filter_by_currency(transactions, currency_code):
@@ -51,7 +51,8 @@ def filter_by_currency(transactions, currency_code):
     for transaction in transactions:
         # Проверяем структуру данных для JSON
         if 'operationAmount' in transaction:
-            transaction_currency = transaction.get('operationAmount', {}).get('currency', {}).get('code', '')
+            transaction_currency = (transaction.get('operationAmount', {})
+                                    .get('currency', {}).get('code', ''))
         # Проверяем структуру данных для CSV
         elif 'currency_code' in transaction:
             transaction_currency = transaction.get('currency_code', '')

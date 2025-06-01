@@ -23,7 +23,8 @@ def main():
     Реализует интерфейс для загрузки данных из файлов (JSON, CSV, XLSX),
     фильтрации, сортировки и вывода информации о транзакциях.
     """
-    print("Привет! Добро пожаловать в программу работы с банковскими транзакциями.")
+    print("Привет! Добро пожаловать в программу работы с"
+          " банковскими транзакциями.")
     print("Выберите необходимый пункт меню:")
     print("1. Получить информацию о транзакциях из JSON-файла")
     print("2. Получить информацию о транзакциях из CSV-файла")
@@ -38,7 +39,8 @@ def main():
         transactions = read_transactions_from_csv("../data/transactions.csv")
         print("Для обработки выбран CSV-файл.")
     elif choice == "3":
-        transactions = read_transactions_from_excel("../data/transactions_excel.xlsx")
+        transactions = (read_transactions_from_excel
+                        ("../data/transactions_excel.xlsx"))
         print("Для обработки выбран XLSX-файл.")
     else:
         print("Неверный выбор. Завершение программы.")
@@ -58,22 +60,26 @@ def main():
             print("Статус операции недоступен. Попробуйте снова.")
 
     # Сортировка по дате
-    sort_choice = input("Отсортировать операции по дате? Да/Нет: ").strip().lower()
+    sort_choice = (input("Отсортировать операции по дате? Да/Нет: ")
+                   .strip().lower())
     if sort_choice == "да":
         order = input(
-            "Отсортировать по возрастанию или по убыванию? (возрастанию/убыванию): "
+            "Отсортировать по возрастанию или по убыванию? "
+            "(возрастанию/убыванию): "
         ).strip().lower()
         ascending = True if order == "возрастанию" else False
         transactions = filter_by_date(transactions, ascending)
 
     # Фильтрация по валюте
-    currency_choice = input("Выводить только рублевые транзакции? Да/Нет: ").strip().lower()
+    currency_choice = (input("Выводить только рублевые транзакции? Да/Нет: ")
+                       .strip().lower())
     if currency_choice == "да":
         transactions = filter_by_currency(transactions, "RUB")
 
     # Фильтрация по описанию
     description_choice = input(
-        "Отфильтровать список транзакций по определенному слову в описании? Да/Нет: "
+        "Отфильтровать список транзакций по определенному слову"
+        " в описании? Да/Нет: "
     ).strip().lower()
     if description_choice == "да":
         search_string = input("Введите слово для поиска в описании: ").strip()
@@ -92,7 +98,8 @@ def main():
 
     # Вывод результатов
     if not transactions:
-        print("Не найдено ни одной транзакции, подходящей под ваши условия фильтрации.")
+        print("Не найдено ни одной транзакции, подходящей "
+              "под ваши условия фильтрации.")
     else:
         print("Распечатываю итоговый список транзакций...")
         print(f"Всего банковских операций в выборке: {len(transactions)}\n")
